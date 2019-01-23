@@ -1,0 +1,22 @@
+{
+  "name": "plugdj-bot",
+  "version": "1.0.0",
+  "description": "A simple plug.dj bot",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Mikołaj Kalwa",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.15.0"
+  },
+  "dependencies": {
+    "lowdb": "^1.0.0",
+    "moment": "^2.24.0",
+    "plugged": "^3.0.4",
+    "winston": "^3.1.0"
+  }
+}
