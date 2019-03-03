@@ -4,19 +4,23 @@
   "description": "A simple plug.dj bot",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "check-config": "node --eval \"require('./lib/validateConfig.js')()\"",
+    "test": "eslint \"**/*.js\""
   },
   "author": "Mikołaj Kalwa",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^5.12.1",
+    "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.15.0"
+    "eslint-plugin-import": "^2.16.0"
   },
   "dependencies": {
+    "bluebird": "^3.5.3",
+    "bunyan": "^1.8.12",
+    "joi": "^14.3.1",
     "lowdb": "^1.0.0",
     "moment": "^2.24.0",
-    "plugged": "^3.0.4",
-    "winston": "^3.1.0"
+    "plugged": "^3.0.4"
   }
 }
