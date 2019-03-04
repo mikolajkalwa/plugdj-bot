@@ -18,10 +18,10 @@ module.exports = {
     handler: async (booth, playback) => {
         if (booth.dj === -1 || playback.media.format === -1) return;
 
-        if (partyNeverEnds) {
-            try {
-                const { booth: { waitlist } } = await bot.getRoomStatsAsync();
+        try {
+            const { booth: { waitlist } } = await bot.getRoomStatsAsync();
 
+            if (partyNeverEnds) {
                 if (waitlist.length === 0 && booth.dj !== bot.getSelf().id) {
                     bot.joinWaitlistAsync();
                 }
@@ -31,9 +31,30 @@ module.exports = {
                         bot.leaveWaitlistAsync();
                     }
                 }
-            } catch (e) {
-                logger.error(e);
             }
+
+            if (historySkip && waitlist.length && booth.dj !== bot.getSelf().id) {
+                try {
+                    const history = await bot.getRoomHistoryAsync();
+                    history.some((song) => {
+                        if (isTheSame(song.media, playback.media)) {
+                            bot.skipDJ(booth.dj, (err) => {
+                                if (err) {
+                                    logger.error(err);
+                                } else {
+                                    bot.sendChat(`@${bot.getUserById(booth.dj).username} your song has been skipped. Reason: song is in history.`);
+                                }
+                            });
+                            return true;
+                        }
+                        return false;
+                    });
+                } catch (e) {
+                    logger.error(`An error has occured while trying to perform history skip: ${JSON.stringify(e)}`);
+                }
+            }
+        } catch (e) {
+            logger.error(e);
         }
 
         if (autowoot) {
@@ -54,27 +75,6 @@ module.exports = {
                 });
             }
         }, (playback.media.duration + 10) * 1000);
-
-        if (historySkip && booth.dj !== bot.getSelf().id) {
-            try {
-                const history = await bot.getRoomHistoryAsync();
-                history.some((song) => {
-                    if (isTheSame(song.media, playback.media)) {
-                        bot.skipDJ(booth.dj, (err) => {
-                            if (err) {
-                                logger.error(err);
-                            } else {
-                                bot.sendChat(`@${bot.getUserById(booth.dj).username} your song has been skipped. Reason: song is in history.`);
-                            }
-                        });
-                        return true;
-                    }
-                    return false;
-                });
-            } catch (e) {
-                logger.error(`An error has occured while trying to perform history skip: ${JSON.stringify(e)}`);
-            }
-        }
 
         if (voteSkip) {
             const votesToSkip = Math.ceil(precentageToSkip * bot.getUsers().length);
